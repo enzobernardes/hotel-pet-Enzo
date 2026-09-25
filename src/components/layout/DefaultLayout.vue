@@ -1,11 +1,11 @@
 <script setup>
 import { RouterView } from 'vue-router';
-import AppNavbar from '@/components/layout/AppNavbar.vue';
-import AppSidebar from '@/components/layout/AppSidebar.vue';
+import AppNavBar from '@/components/layout/AppNavBar.vue';
+import AppSidebar from '@/components/layout/AppSidebar.vue';                            
 </script>
 
 <template>
-  <AppNavbar />
+  <AppNavBar />
 
   <div class="container-fluid">
     <div class="row">
