@@ -10,17 +10,17 @@ const tutores = ref([]); // ainda não carregada (fora do escopo desta atividade
 const carregando = ref(false); // true enquanto a requisição está em andamento
 const erro = ref(''); // texto do erro; vazio quando não há erro
 
-// "async" indica que a função é assíncrona: ela sempre devolve uma Promise e
-// permite usar "await" no seu interior.
+// async indica que a função é assíncrona: ela sempre devolve uma Promise e
+// permite usar await no seu interior.
 async function carregarPets() {
   // Antes de pedir os dados: liga o "Carregando..." e limpa erro anterior.
   carregando.value = true;
   erro.value = '';
 
-  // try/catch: qualquer erro lançado dentro do "try" desvia para o "catch".
+  // try/catch: qualquer erro lançado dentro do try desvia para o catch.
   try {
     // fetch() envia a requisição HTTP e devolve uma Promise.
-    // "await" pausa SÓ esta função até a resposta chegar; o resto da página
+    // await pausa SÓ esta função até a resposta chegar; o resto da página
     // continua funcionando (por isso o "Carregando..." aparece na tela).
     const resposta = await fetch(API_URL);
 
@@ -47,6 +47,7 @@ async function carregarPets() {
     // mensagem "Carregando..." saia da tela em qualquer situação.
     carregando.value = false;
   }
+ 
 }
 
 // onMounted: executa a função quando o componente é exibido na tela.
@@ -88,10 +89,7 @@ onMounted(carregarPets);
     </div>
 
     <!-- Estado 3: sucesso, exibe a lista de pets -->
-    <table
-      v-else
-      class="table table-striped"
-    >
+    <table class="table table-striped table-hover">
       <thead>
         <tr>
           <th>ID</th>
