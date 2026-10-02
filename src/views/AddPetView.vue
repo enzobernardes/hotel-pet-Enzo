@@ -53,13 +53,13 @@ onMounted(carregarTutores);
     </header>
 
     <!--
-<RouterLink
-class="btn btn-primary"
-:to="{ name: 'addPet' }"
->
-Adicionar Pet
-</RouterLink>
--->
+    <RouterLink
+      class="btn btn-primary"
+      :to="{ name: 'addPet' }"
+    >
+      Adicionar Pet
+    </RouterLink>
+    -->
 
     <form @submit.prevent="salvarPet">
       <div class="col-md-6 mb-3">
@@ -124,6 +124,12 @@ Adicionar Pet
           </option>
         </select>
       </div>
+      <button
+        type="submit"
+        class="btn btn-success"
+      >
+        Salvar Pet
+      </button>
     </form>
   </div>
 </template>

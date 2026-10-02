@@ -1,14 +1,25 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-// Endereço da API (json-server). Iniciar com: npm run api
-const API_URL = 'http://localhost:3000/pets';
+// Endereço base da API (json-server). Iniciar com: npm run api
+const API_URL = 'http://localhost:3000';
 
 // ref() cria dados "reativos": quando o valor muda, o Vue atualiza a tela.
 const pets = ref([]); // lista de pets recebida da API
 const tutores = ref([]); // ainda não carregada (fora do escopo desta atividade)
 const carregando = ref(false); // true enquanto a requisição está em andamento
 const erro = ref(''); // texto do erro; vazio quando não há erro
+
+// Busca os tutores para montar o nome do tutor em cada pet.
+async function carregarTutores() {
+  const resposta = await fetch(`${API_URL}/tutores`);
+
+  if (!resposta.ok) {
+    throw new Error(`Falha na consulta de tutores: HTTP ${resposta.status}`);
+  }
+
+  tutores.value = await resposta.json();
+}
 
 // async indica que a função é assíncrona: ela sempre devolve uma Promise e
 // permite usar await no seu interior.
@@ -43,15 +54,28 @@ async function carregarPets() {
     erro.value =
       'Não foi possível carregar os pets. Verifique se a API está em execução e tente novamente.';
   } finally {
-    // O "finally" executa SEMPRE (com sucesso ou com erro): garante que a
-    // mensagem "Carregando..." saia da tela em qualquer situação.
+    // O "finally" executa SEMPRE: garante que a mensagem "Carregando..." saia.
     carregando.value = false;
   }
- 
+}
+
+// Retorna o nome do tutor correspondente ao pet.
+function nomeDOTutor(tutorId) {
+  return (
+    tutores.value.find((t) => String(t.id) === String(tutorId))?.nome ||
+    'Tutor não encontrado'
+  );
 }
 
 // onMounted: executa a função quando o componente é exibido na tela.
-onMounted(carregarPets);
+onMounted(async () => {
+  try {
+    await Promise.all([carregarTutores(), carregarPets()]);
+  } catch (e) {
+    console.error(e);
+    erro.value = 'Não foi possível carregar os dados do sistema.';
+  }
+});
 </script>
 
 <template>
@@ -107,6 +131,12 @@ onMounted(carregarPets);
           <td>{{ pet.id }}</td>
           <td>{{ pet.nome }}</td>
           <td>{{ pet.especie }}</td>
+          <td>{{ nomeDOTutor(pet.tutorId) }}</td>
+          <td>
+            <RouterLink to="pets/${pet.id}"> Editar </RouterLink>
+
+            Excluir
+          </td>
           <td>
             {{
               tutores.find((t) => t.id === pet.tutorId)?.nome ||

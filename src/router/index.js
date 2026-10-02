@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import PetsView from '@/views/PetsView.vue';
-import AddPetView from '@/views/AddPetView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,12 +10,12 @@ const router = createRouter({
     {
       path: '/pets',
       name: 'pets',
-      component: PetsView,
+      component: () => import('@/views/PetsView.vue'),
     },
     {
       path: '/pets/novo',
       name: 'addPet',
-      component: AddPetView,
+      component: () => import('@/views/AddPetView.vue'),
     },
   ],
 });
