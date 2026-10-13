@@ -18,12 +18,27 @@ async function carregarTutores() {
 
 // chamando a minha API para salvar os dados de pet
 const novoPet = ref({
+  id: '',
   nome: '',
   especie: '',
   tutorId: '',
 });
 
+async function proximoIdDisponivel() {
+  const resposta = await fetch(`${API_URL}/pets`);
+  const pets = await resposta.json();
+
+  const maiorIdNumerico = pets.reduce((maior, pet) => {
+    const valor = Number(pet.id);
+    return Number.isFinite(valor) && valor > maior ? valor : maior;
+  }, 0);
+
+  return maiorIdNumerico + 1;
+}
+
 async function salvarPet() {
+  novoPet.value.id = await proximoIdDisponivel();
+
   // fazendo a requisição para a API para o servidor
   await fetch(`${API_URL}/pets`, {
     method: 'POST',
@@ -36,6 +51,7 @@ async function salvarPet() {
 
   // limpando os campos do formulário
   novoPet.value = {
+    id: '',
     nome: '',
     especie: '',
     tutorId: '',

@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import Deletetela from '@/components/layout/deletetela.vue';
 
 // Endereço base da API (json-server). Iniciar com: npm run api
 const API_URL = 'http://localhost:3000';
@@ -9,6 +10,8 @@ const pets = ref([]); // lista de pets recebida da API
 const tutores = ref([]); // ainda não carregada (fora do escopo desta atividade)
 const carregando = ref(false); // true enquanto a requisição está em andamento
 const erro = ref(''); // texto do erro; vazio quando não há erro
+const mostrarConfirmacaoExclusao = ref(false);
+const petParaExcluir = ref(null);
 
 // Busca os tutores para montar o nome do tutor em cada pet.
 async function carregarTutores() {
@@ -33,7 +36,7 @@ async function carregarPets() {
     // fetch() envia a requisição HTTP e devolve uma Promise.
     // await pausa SÓ esta função até a resposta chegar; o resto da página
     // continua funcionando (por isso o "Carregando..." aparece na tela).
-    const resposta = await fetch(API_URL);
+    const resposta = await fetch(`${API_URL}/pets`);
 
     // fetch() NÃO rejeita a Promise quando o servidor responde com erro
     // (404, 500...). Ele só falha se não conseguir se comunicar (rede/API
@@ -46,7 +49,18 @@ async function carregarPets() {
     // resposta.json() lê o corpo da resposta e o converte em objeto/array
     // JavaScript. Também devolve uma Promise, por isso precisa de "await".
     // Se o corpo não for um JSON válido, esta linha rejeita e cai no catch.
-    pets.value = await resposta.json();
+    const petsRecebidos = await resposta.json();
+
+    pets.value = petsRecebidos.sort((a, b) => {
+      const numeroA = Number(a.id);
+      const numeroB = Number(b.id);
+
+      if (Number.isFinite(numeroA) && Number.isFinite(numeroB)) {
+        return numeroA - numeroB;
+      }
+
+      return String(a.id).localeCompare(String(b.id));
+    });
   } catch (e) {
     // Chegamos aqui se: a API estiver fora do ar, a resposta não for "ok" ou
     // o JSON for inválido. Guardamos uma mensagem amigável para a tela.
@@ -65,6 +79,33 @@ function nomeDOTutor(tutorId) {
     tutores.value.find((t) => String(t.id) === String(tutorId))?.nome ||
     'Tutor não encontrado'
   );
+}
+
+function abrirConfirmacaoExclusao(pet) {
+  petParaExcluir.value = pet;
+  mostrarConfirmacaoExclusao.value = true;
+}
+
+function cancelarExclusao() {
+  petParaExcluir.value = null;
+  mostrarConfirmacaoExclusao.value = false;
+}
+
+async function confirmarExclusao() {
+  if (!petParaExcluir.value) {
+    return;
+  }
+
+  const resposta = await fetch(`${API_URL}/pets/${petParaExcluir.value.id}`, {
+    method: 'DELETE',
+  });
+
+  if (!resposta.ok) {
+    throw new Error(`Falha ao excluir pet: HTTP ${resposta.status}`);
+  }
+
+  pets.value = pets.value.filter((pet) => pet.id !== petParaExcluir.value.id);
+  cancelarExclusao();
 }
 
 // onMounted: executa a função quando o componente é exibido na tela.
@@ -133,18 +174,25 @@ onMounted(async () => {
           <td>{{ pet.especie }}</td>
           <td>{{ nomeDOTutor(pet.tutorId) }}</td>
           <td>
-            <RouterLink to="pets/${pet.id}"> Editar </RouterLink>
-
-            Excluir
+            <RouterLink :to="`/pets/${pet.id}`"> Editar </RouterLink>
           </td>
           <td>
-            {{
-              tutores.find((t) => t.id === pet.tutorId)?.nome ||
-              'Tutor não encontrado'
-            }}
+            <button
+              class="btn btn-sm btn-danger"
+              @click="abrirConfirmacaoExclusao(pet)"
+            >
+              Excluir
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <Deletetela
+      v-if="mostrarConfirmacaoExclusao"
+      :pet="petParaExcluir"
+      @confirmar="confirmarExclusao"
+      @cancelar="cancelarExclusao"
+    />
   </div>
 </template>

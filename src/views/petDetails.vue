@@ -2,11 +2,14 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { onMounted, ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
-const API_URL = 'http://localhost:3000/pets';
+const API_URL = 'http://localhost:3000';
+const route = useRoute();
 const pet = ref({});
 const tutor = ref({});
+
+function nomeDOTutor() {
+  return tutor.value?.nome || 'Tutor não encontrado';
+}
 
 //função para carregar os dados do pet e do tutor
 async function carregarPet() {
@@ -36,6 +39,6 @@ onMounted(carregarPet);
 
 <template>
   <h1>Nome: {{ pet.nome }}</h1>
-  <p>Especie: {{ pet.especie }}</p>
-  <p>Tutor: {{ nomeDOTutor(pet.tutorId) }}</p>
+  <p>Espécie: {{ pet.especie }}</p>
+  <p>Tutor: {{ nomeDOTutor() }}</p>
 </template>
