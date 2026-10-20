@@ -9,14 +9,35 @@
       "id": "2",
       "nome": "Carlos",
       "telefone": "47988880000"
+    },
+    {
+      "id": "cTtci-Dl0Gs",
+      "nome": "analu",
+      "telefone": "749090949493"
+    },
+    {
+      "nome": "Enzo Bernardes",
+      "telefone": "749090949493",
+      "cpfCnpj": "00480605966",
+      "email": "bernardesenzo9@gmail.com",
+      "dataNascimento": "2009-01-22",
+      "endereco": {
+        "rua": "avenida santa catarina",
+        "numero": "12",
+        "bairro": "centro",
+        "cidade": "Barra Velha",
+        "estado": "SC",
+        "cep": "88390000"
+      },
+      "id": "KX-ct4C6hzk"
     }
   ],
   "pets": [
     {
-      "id": "2",
-      "nome": "Nino",
-      "especie": "Gato",
-      "tutorId": "1"
+      "id": "chMChqvYW38",
+      "nome": "malu",
+      "especie": "Cachorro",
+      "tutorId": "KX-ct4C6hzk"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

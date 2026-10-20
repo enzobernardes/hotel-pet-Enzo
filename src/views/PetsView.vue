@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import Deletetela from '@/components/layout/deletetela.vue';
+import PetDeleteCard from '@/components/layout/PetDeleteCard.vue';
 
 // Endereço base da API (json-server). Iniciar com: npm run api
 const API_URL = 'http://localhost:3000';
@@ -188,7 +188,7 @@ onMounted(async () => {
       </tbody>
     </table>
 
-    <Deletetela
+    <PetDeleteCard
       v-if="mostrarConfirmacaoExclusao"
       :pet="petParaExcluir"
       @confirmar="confirmarExclusao"
